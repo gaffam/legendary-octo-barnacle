@@ -1,0 +1,114 @@
+appId: com.personal.atelier
+productName: Atelier
+copyright: Copyright © 2026 — Kişisel kullanım için
+
+directories:
+  output: release
+  buildResources: resources
+
+files:
+  - dist-electron/**/*
+  - dist/**/*
+  - package.json
+  - "!**/*.map"
+  - "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}"
+  - "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}"
+  - "!**/node_modules/.bin"
+  - "!**/{.DS_Store,.git,.gitignore,.gitattributes,.editorconfig,.idea,.vscode}"
+  - "!**/{tsconfig.json,tsconfig.*.json,tslint.json,jest.config.*}"
+
+extraResources:
+  - from: resources/
+    to: resources/
+    filter:
+      - "**/*"
+      - "!README.md"
+
+# Native modules must be unpacked from asar so they can be loaded at runtime.
+asar: true
+asarUnpack:
+  - node_modules/better-sqlite3/**/*
+  - node_modules/bindings/**/*
+  - node_modules/file-uri-to-path/**/*
+  - node_modules/nspell/**/*
+  - node_modules/dictionary-tr/**/*
+  - node_modules/dictionary-en/**/*
+  - node_modules/dictionary-fr/**/*
+  - node_modules/dictionary-it/**/*
+
+# Rebuild native modules against the target Electron version.
+npmRebuild: true
+buildDependenciesFromSource: false
+nodeGypRebuild: false
+
+# ── Windows ─────────────────────────────────────────────────────────────────
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: resources/icon.ico
+  artifactName: ${productName}-Setup-${version}-${arch}.${ext}
+  publisherName: Atelier
+  requestedExecutionLevel: asInvoker
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowElevation: true
+  allowToChangeInstallationDirectory: true
+  installerIcon: resources/icon.ico
+  uninstallerIcon: resources/icon.ico
+  installerHeaderIcon: resources/icon.ico
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Atelier
+  runAfterFinish: true
+  deleteAppDataOnUninstall: false
+  menuCategory: false
+  multiLanguageInstaller: true
+  installerLanguages:
+    - tr_TR
+    - en_US
+  language: "1055" # Turkish
+
+# ── macOS ───────────────────────────────────────────────────────────────────
+mac:
+  target:
+    - target: dmg
+      arch:
+        - x64
+        - arm64
+  icon: resources/icon.icns
+  category: public.app-category.productivity
+  hardenedRuntime: false
+  gatekeeperAssess: false
+  artifactName: ${productName}-${version}-${arch}.${ext}
+
+dmg:
+  title: Atelier ${version}
+  icon: resources/icon.icns
+  contents:
+    - x: 130
+      y: 220
+    - x: 410
+      y: 220
+      type: link
+      path: /Applications
+
+# ── Linux ───────────────────────────────────────────────────────────────────
+linux:
+  target:
+    - target: AppImage
+      arch:
+        - x64
+  icon: resources/icon.png
+  category: Office
+  synopsis: Kişisel lüks yazı atölyesi
+  description: |
+    Atelier, klasik kırtasiye estetiğini ve modern bir yazı ortamını birleştiren,
+    yalnızca size özel masaüstü yazı atölyesidir.
+  artifactName: ${productName}-${version}-${arch}.${ext}
+
+appImage:
+  artifactName: ${productName}-${version}-${arch}.${ext}
